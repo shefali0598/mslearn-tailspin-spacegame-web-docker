@@ -5,28 +5,29 @@ variables:
   webRepository: 'web'
   tag: '$(Build.BuildId)'
 
-  - stage: 'Build'
+stages:
+- stage: 'Build'
   displayName: 'Build and push'
   jobs:  
-    - job: 'Build'
-      displayName: 'Build job'
-      pool:
-        vmImage: 'ubuntu-18.04'
-      steps:
-      - task: Docker@2
-        displayName: 'Build and push the image to container registry'
-        inputs:
-          command: buildAndPush
-          buildContext: $(Build.Repository.LocalPath)
-          repository: $(webRepository)
-          dockerfile: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web/Dockerfile'
-          containerRegistry: 'Container Registry Connection'
-          tags: |
-            $(tag)  
+  - job: 'Build'
+    displayName: 'Build job'
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+    - task: Docker@2
+      displayName: 'Build and push the image to container registry'
+      inputs:
+        command: buildAndPush
+        buildContext: $(Build.Repository.LocalPath)
+        repository: $(webRepository)
+        dockerfile: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web/Dockerfile'
+        containerRegistry: 'Container Registry Connection'
+        tags: |
+          $(tag)
 
-variables:
-    wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
-    dotnetSdkVersion: '3.1.300'
+    variables:
+      wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
+      dotnetSdkVersion: '3.1.300'
 
     steps:
     - task: UseDotNet@2
@@ -75,9 +76,9 @@ variables:
       artifact: drop
 
 - stage: 'Deploy'
-    displayName: 'Deploy the container'
-    dependsOn: Build
-    jobs:
+  displayName: 'Deploy the container'
+  dependsOn: Build
+  jobs:
   - job: 'Deploy'
     displayName: 'Deploy job'
     pool:
