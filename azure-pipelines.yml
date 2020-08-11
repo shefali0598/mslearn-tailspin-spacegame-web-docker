@@ -2,14 +2,13 @@ trigger:
 - '*'
 
 variables:
-  buildConfiguration: 'Release'
   webRepository: 'web'
   tag: '$(Build.BuildId)'
 
 - stage: 'Build'
     displayName: 'Build and push'
     jobs:  
-     - job: 'Build'
+    - job: 'Build'
         displayName: 'Build job'
         pool:
         vmImage: 'ubuntu-18.04'
@@ -23,11 +22,11 @@ variables:
         dockerfile: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web/Dockerfile'
         containerRegistry: 'Container Registry Connection'
         tags: |
-          $(tag)
+          $(tag)  
 
-    variables:
-      wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
-      dotnetSdkVersion: '3.1.300'
+variables:
+    wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
+    dotnetSdkVersion: '3.1.300'
 
     steps:
     - task: UseDotNet@2
@@ -75,7 +74,7 @@ variables:
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: drop
 
-  - stage: 'Deploy'
+- stage: 'Deploy'
     displayName: 'Deploy the container'
     dependsOn: Build
     jobs:
